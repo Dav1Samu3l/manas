@@ -1,0 +1,185 @@
+<!-- Cartão Virtual Disruptivo -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Cartão Virtual Disruptivo</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      width: 100vw;
+      height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      background: url('./image.png') no-repeat center center fixed;
+      background-size: cover;
+    }
+    .confetti {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 10;
+      display: none;
+    }
+    .card {
+      background: rgba(255,255,255,0.95);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      padding: 40px 30px;
+      text-align: center;
+      max-width: 350px;
+      position: relative;
+      z-index: 20;
+      transition: max-width 0.3s, font-size 0.3s, padding 0.3s;
+    }
+    h1 {
+      font-size: 2.2em;
+      margin-bottom: 10px;
+      color: #ff6f00;
+    }
+    p {
+      font-size: 1.1em;
+      margin-bottom: 25px;
+      color: #333;
+    }
+    button {
+      background: #00c853;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 28px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.2s;
+      z-index: 1;
+      position: relative;
+    }
+    button:hover {
+      background: #00b8d4;
+    }
+    .surprise {
+      display: none;
+      margin-top: 20px;
+      font-size: 1.3em;
+      color: #ff6f00;
+      animation: pop 0.6s;
+    }
+    @keyframes pop {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Responsividade para mobile */
+    @media (max-width: 600px) {
+      .card {
+        max-width: 100vw;
+        width: 98vw;
+        padding: 40px 8px;
+        font-size: 1.3em;
+      }
+      .surprise {
+        font-size: 1.7em;
+        margin-top: 28px;
+      }
+      h1 {
+        font-size: 2.3em;
+      }
+      button {
+        font-size: 1.2em;
+        padding: 18px 36px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas class="confetti"></canvas>
+  <div class="card">
+    <h1>Clique aqui!!!</h1>
+    
+    <button onclick="showSurprise()">Surpresa!</button>
+    <div class="surprise" id="surprise">
+      <strong>🚀 Parabéns <br>pelo seu dia!</strong><br>
+      Hoje o sol parece sorrir só pra você, mana!!!! <br> mulher de força, que trabalha com garra, vive com leveza e ama como o mar ama a praia: sem pressa, mas com profundidade. Que  os proximos anos sejam tão vibrante quanto seus dias à beira-mar e tão doce quanto sua alma generosa. Feliz aniversário!
+    
+
+    </em>
+    </div>
+  </div>
+  <script>
+    // Confetti Animation - só inicia após o clique
+    const canvas = document.querySelector('.confetti');
+    const ctx = canvas.getContext('2d');
+    let confetti = [];
+    let W = window.innerWidth;
+    let H = window.innerHeight;
+    let animationActive = false;
+    let animationFrameId;
+    const confettiCount = () => Math.floor(window.innerWidth * window.innerHeight / 350);
+
+    function resizeCanvas() {
+      W = window.innerWidth;
+      H = window.innerHeight;
+      canvas.width = W;
+      canvas.height = H;
+      if (animationActive) {
+        createConfetti();
+      }
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function createConfetti() {
+      confetti = [];
+      for (let i = 0; i < confettiCount(); i++) {
+        confetti.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: Math.random() * 8 + 4,
+          d: Math.random() * 10 + 5,
+          color: `hsl(${Math.random()*360},80%,60%)`,
+          tilt: Math.random() * 10 - 5
+        });
+      }
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, W, H);
+      confetti.forEach(c => {
+        ctx.beginPath();
+        ctx.ellipse(c.x, c.y, c.r, c.r/2, c.tilt, 0, 2 * Math.PI);
+        ctx.fillStyle = c.color;
+        ctx.fill();
+        c.y += c.d * 0.5;
+        c.x += Math.sin(c.y / 20) * 2;
+        if (c.y > H + 20) {
+          c.y = -10;
+          c.x = Math.random() * W;
+          c.r = Math.random() * 8 + 4;
+          c.d = Math.random() * 10 + 5;
+          c.color = `hsl(${Math.random()*360},80%,60%)`;
+          c.tilt = Math.random() * 10 - 5;
+        }
+      });
+      animationFrameId = requestAnimationFrame(animateConfetti);
+    }
+
+    function showSurprise() {
+      document.getElementById('surprise').style.display = 'block';
+      canvas.style.display = 'block';
+      animationActive = true;
+      resizeCanvas();
+      createConfetti();
+      animateConfetti();
+    }
+  </script>
+</body>
+</html>
